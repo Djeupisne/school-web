@@ -1,0 +1,142 @@
+<div class="dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div>
+                <h1>{{ greeting }} 👋</h1>
+                <p class="subtitle">Voici un aperçu de votre établissement aujourd'hui</p>
+            </div>
+            <div class="header-date">
+                <div class="date-icon">📅</div>
+                <div>
+                    <div class="date-main">{{ currentDate | date:'dd MMMM yyyy' }}</div>
+                    <div class="date-time">{{ currentDate | date:'HH:mm' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertes -->
+    <div *ngIf="alerts.length > 0" class="alerts-section">
+        <div *ngFor="let alert of alerts" class="alert alert-{{ alert.type }}">
+            <div class="alert-icon">
+                <span *ngIf="alert.type === 'warning'">⚠️</span>
+                <span *ngIf="alert.type === 'danger'">🚨</span>
+                <span *ngIf="alert.type === 'info'">ℹ️</span>
+            </div>
+            <div class="alert-content">
+                <strong>{{ alert.title }}</strong>
+                <p>{{ alert.message }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-students">👨‍🎓</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.students }}</div>
+                <div class="stat-label">Étudiants</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-teachers">👨‍🏫</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.teachers }}</div>
+                <div class="stat-label">Enseignants</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-grades">📝</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.grades }}</div>
+                <div class="stat-label">Notes</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-revenue">💰</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ formatCurrency(stats.totalRevenue) }}</div>
+                <div class="stat-label">Revenus</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques - Layout amélioré -->
+    <div class="charts-section">
+        <div class="chart-card chart-card-large">
+            <div class="chart-header">
+                <h3>📊 Moyennes par matière</h3>
+            </div>
+            <div class="chart-container">
+                <canvas baseChart
+                        [data]="barChartData"
+                        [options]="barChartOptions"
+                        type="bar">
+                </canvas>
+            </div>
+        </div>
+
+        <div class="chart-card chart-card-small">
+            <div class="chart-header">
+                <h3>🎯 Répartition des niveaux</h3>
+            </div>
+            <div class="chart-container">
+                <canvas baseChart
+                        [data]="doughnutChartData"
+                        [options]="doughnutChartOptions"
+                        type="doughnut">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activité et Actions -->
+    <div class="bottom-grid">
+        <div class="activity-card">
+            <div class="card-header">
+                <h3>⚡ Activité récente</h3>
+            </div>
+            <div class="activity-list">
+                <div *ngFor="let activity of recentActivity" class="activity-item">
+                    <div class="activity-icon" [style.background]="activity.color + '20'">
+                        {{ activity.icon }}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">{{ activity.title }}</div>
+                        <div class="activity-subtitle">{{ activity.subtitle }}</div>
+                    </div>
+                    <div class="activity-time">{{ timeAgo(activity.date) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-card">
+            <div class="card-header">
+                <h3>🚀 Actions rapides</h3>
+            </div>
+            <div class="actions-list">
+                <a routerLink="/students/new" class="action-item">
+                    <span class="action-icon">➕</span>
+                    <span>Nouvel étudiant</span>
+                </a>
+                <a routerLink="/grades/entry" class="action-item">
+                    <span class="action-icon">📝</span>
+                    <span>Saisir une note</span>
+                </a>
+                <a routerLink="/grades/bulletin" class="action-item">
+                    <span class="action-icon">📄</span>
+                    <span>Gérer les bulletins</span>
+                </a>
+                <a routerLink="/schedule" class="action-item">
+                    <span class="action-icon">📅</span>
+                    <span>Emplois du temps</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

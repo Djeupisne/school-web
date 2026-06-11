@@ -1,0 +1,8 @@
+<div class="toast-container">
+    <div *ngFor="let n of notifications"
+         class="toast toast-{{ n.type }}"
+         (click)="close(n.id)">
+        <span class="icon">{{ getIcon(n.type) }}</span>
+        <span class="message">{{ n.message }}</span>
+    </div>
+</div>

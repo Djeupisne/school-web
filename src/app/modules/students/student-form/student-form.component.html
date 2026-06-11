@@ -1,0 +1,119 @@
+<div class="page-header">
+    <h2>Nouvel étudiant</h2>
+    <a routerLink="/students" class="btn-secondary">← Retour</a>
+</div>
+
+<div class="form-container">
+    <form (ngSubmit)="onSubmit()">
+        <!-- Informations personnelles -->
+        <div class="form-section">
+            <h3>📋 Informations personnelles</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Prénom *</label>
+                    <input type="text" [(ngModel)]="student.firstName" name="firstName"
+                           [class.error]="errors.firstName" placeholder="Ex: Jean">
+                    <div *ngIf="errors.firstName" class="error-text">{{ errors.firstName }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" [(ngModel)]="student.lastName" name="lastName"
+                           [class.error]="errors.lastName" placeholder="Ex: Dupont">
+                    <div *ngIf="errors.lastName" class="error-text">{{ errors.lastName }}</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date de naissance *</label>
+                    <input type="date" [(ngModel)]="student.dateOfBirth" name="dateOfBirth"
+                           [class.error]="errors.dateOfBirth">
+                    <div *ngIf="errors.dateOfBirth" class="error-text">{{ errors.dateOfBirth }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Genre *</label>
+                    <select [(ngModel)]="student.gender" name="gender" [class.error]="errors.gender">
+                        <option value="">-- Sélectionner --</option>
+                        <option *ngFor="let g of genders" [value]="g">{{ g }}</option>
+                    </select>
+                    <div *ngIf="errors.gender" class="error-text">{{ errors.gender }}</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Nationalité</label>
+                <input type="text" [(ngModel)]="student.nationality" name="nationality" placeholder="Ex: Française">
+            </div>
+        </div>
+
+        <!-- Coordonnées -->
+        <div class="form-section">
+            <h3>📍 Coordonnées</h3>
+            <div class="form-group">
+                <label>Adresse complète</label>
+                <textarea [(ngModel)]="student.address" name="address" rows="3"
+                          placeholder="Adresse postale complète"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" [(ngModel)]="student.phone" name="phone"
+                           [class.error]="errors.phone" placeholder="+33 6 12 34 56 78">
+                    <div *ngIf="errors.phone" class="error-text">{{ errors.phone }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="student.email" name="email"
+                           [class.error]="errors.email" placeholder="exemple@email.com">
+                    <div *ngIf="errors.email" class="error-text">{{ errors.email }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scolarité -->
+        <div class="form-section">
+            <h3>🎓 Scolarité</h3>
+            <div class="form-group">
+                <label>Établissement précédent</label>
+                <input type="text" [(ngModel)]="student.previousSchool" name="previousSchool"
+                       placeholder="Nom de l'école précédente">
+            </div>
+        </div>
+
+        <!-- Santé et Urgence -->
+        <div class="form-section">
+            <h3>🏥 Santé et Urgence</h3>
+            <div class="form-group">
+                <label>Informations médicales</label>
+                <textarea [(ngModel)]="student.medicalInfo" name="medicalInfo" rows="3"
+                          placeholder="Allergies, traitements, conditions particulières..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Contact d'urgence</label>
+                    <input type="text" [(ngModel)]="student.emergencyContact" name="emergencyContact"
+                           placeholder="Nom du contact">
+                </div>
+
+                <div class="form-group">
+                    <label>Téléphone d'urgence</label>
+                    <input type="tel" [(ngModel)]="student.emergencyPhone" name="emergencyPhone"
+                           placeholder="+33 6 12 34 56 78">
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <button type="button" class="btn-secondary" routerLink="/students">Annuler</button>
+            <button type="submit" class="btn-primary" [disabled]="submitting">
+                {{ submitting ? 'Enregistrement...' : '💾 Enregistrer l\'étudiant' }}
+            </button>
+        </div>
+    </form>
+</div>

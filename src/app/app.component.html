@@ -1,0 +1,9 @@
+<app-toast-container></app-toast-container>
+<app-navbar *ngIf="authService.isAuthenticated()"></app-navbar>
+<div class="layout" *ngIf="authService.isAuthenticated()">
+    <app-sidebar></app-sidebar>
+    <main class="content">
+        <router-outlet></router-outlet>
+    </main>
+</div>
+<router-outlet *ngIf="!authService.isAuthenticated()"></router-outlet>

@@ -1,0 +1,4 @@
+.subtitle { color: var(--text-light); margin-top: 4px; font-size: 14px; }
+.loading { text-align: center; padding: 40px; color: var(--text-light); }
+.actions { display: flex; gap: 8px; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }

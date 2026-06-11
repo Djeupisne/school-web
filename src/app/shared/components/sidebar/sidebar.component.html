@@ -1,0 +1,22 @@
+<aside class="sidebar">
+    <div class="nav-section">Principal</div>
+    <ul>
+        <li><a routerLink="/dashboard" routerLinkActive="active"><span class="icon">📊</span> Dashboard</a></li>
+    </ul>
+
+    <div class="nav-section" style="margin-top: 24px;">Gestion</div>
+    <ul>
+        <li *ngIf="role === 'ADMIN' || role === 'TEACHER'">
+            <a routerLink="/students" routerLinkActive="active"><span class="icon">👨‍🎓</span> Étudiants</a>
+        </li>
+        <li *ngIf="role === 'ADMIN' || role === 'TEACHER'">
+            <a routerLink="/grades" routerLinkActive="active"><span class="icon">📝</span> Notes</a>
+        </li>
+        <li *ngIf="role === 'ADMIN'">
+            <a routerLink="/schedule" routerLinkActive="active"><span class="icon">📅</span> Emplois du temps</a>
+        </li>
+        <li *ngIf="role === 'ADMIN'">
+            <a routerLink="/staff" routerLinkActive="active"><span class="icon">👥</span> Personnel</a>
+        </li>
+    </ul>
+</aside>

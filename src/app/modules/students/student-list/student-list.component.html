@@ -1,0 +1,57 @@
+<div class="page-header">
+    <div>
+        <h2>Liste des étudiants</h2>
+        <p class="subtitle">{{ filteredStudents.length }} étudiant(s) au total</p>
+    </div>
+    <a routerLink="new" class="btn-primary">➕ Nouvel étudiant</a>
+</div>
+
+<div class="search-box">
+    <input
+            type="text"
+            placeholder="Rechercher par nom, prénom ou parent..."
+            [(ngModel)]="searchQuery"
+            (input)="filterStudents()">
+</div>
+
+<div *ngIf="loading" class="loading">Chargement...</div>
+
+<div *ngIf="!loading && filteredStudents.length === 0" class="empty-state card">
+    <div class="icon">📭</div>
+    <h3>Aucun étudiant trouvé</h3>
+    <p>Commencez par ajouter un nouvel étudiant.</p>
+</div>
+
+<div *ngIf="!loading && filteredStudents.length > 0" class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>Prénom</th>
+            <th>Nom</th>
+            <th>Date de naissance</th>
+            <th>Genre</th>
+            <th>Parent</th>
+            <th>Téléphone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let s of filteredStudents">
+            <td><strong>{{ s.firstName }}</strong></td>
+            <td>{{ s.lastName }}</td>
+            <td>{{ s.dateOfBirth | date:'dd/MM/yyyy' }}</td>
+            <td>
+          <span class="badge" [class.badge-info]="s.gender === 'Masculin'" [class.badge-warning]="s.gender === 'Féminin'">
+            {{ s.gender || '—' }}
+          </span>
+            </td>
+            <td>{{ s.parent?.firstName }} {{ s.parent?.lastName }}</td>
+            <td>{{ s.phone || '—' }}</td>
+            <td class="actions">
+                <a [routerLink]="['/grades/bulletin', s.id]" class="btn-outline btn-sm">📝 Notes</a>
+                <button class="btn-danger btn-sm" (click)="deleteStudent(s.id)">🗑️</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

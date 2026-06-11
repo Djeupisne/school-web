@@ -1,0 +1,59 @@
+<div class="page-header">
+    <h2>Saisie des notes</h2>
+</div>
+
+<div class="card form-card">
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label>Étudiant *</label>
+            <select [(ngModel)]="grade.studentId" name="studentId" [class.error]="errors.studentId">
+                <option [ngValue]="null">-- Sélectionner un étudiant --</option>
+                <option *ngFor="let s of students" [ngValue]="s.id">
+                    {{ s.firstName }} {{ s.lastName }}
+                </option>
+            </select>
+            <div *ngIf="errors.studentId" class="error-text">{{ errors.studentId }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>Matière *</label>
+            <select [(ngModel)]="grade.subject" name="subject" [class.error]="errors.subject">
+                <option value="">-- Sélectionner une matière --</option>
+                <optgroup label="📚 Primaire">
+                    <option *ngFor="let sub of subjectsByLevel['Primaire']" [value]="sub">{{ sub }}</option>
+                </optgroup>
+                <optgroup label="🏫 Collège">
+                    <option *ngFor="let sub of subjectsByLevel['Collège']" [value]="sub">{{ sub }}</option>
+                </optgroup>
+                <optgroup label="🎓 Lycée">
+                    <option *ngFor="let sub of subjectsByLevel['Lycée']" [value]="sub">{{ sub }}</option>
+                </optgroup>
+            </select>
+            <div *ngIf="errors.subject" class="error-text">{{ errors.subject }}</div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Note / 20 *</label>
+                <input type="number" min="0" max="20" step="0.25"
+                       [(ngModel)]="grade.score" name="score" [class.error]="errors.score">
+                <div *ngIf="errors.score" class="error-text">{{ errors.score }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>Trimestre *</label>
+                <select [(ngModel)]="grade.term" name="term" [class.error]="errors.term">
+                    <option value="">-- Trimestre --</option>
+                    <option *ngFor="let t of terms" [value]="t">{{ t }}</option>
+                </select>
+                <div *ngIf="errors.term" class="error-text">{{ errors.term }}</div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="submitting">
+                {{ submitting ? 'Enregistrement...' : '💾 Enregistrer la note' }}
+            </button>
+        </div>
+    </form>
+</div>

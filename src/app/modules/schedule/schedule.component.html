@@ -1,0 +1,117 @@
+<div class="page-header">
+    <div>
+        <h2>📅 Emplois du temps</h2>
+        <p class="subtitle">Gérez les plannings des classes</p>
+    </div>
+    <button class="btn-primary" (click)="openForm()">➕ Nouveau cours</button>
+</div>
+
+<!-- Filtre -->
+<div class="filter-bar">
+    <select [(ngModel)]="selectedClass" (change)="filterSchedules()">
+        <option value="">Toutes les classes</option>
+        <optgroup label="📚 Primaire">
+            <option *ngFor="let c of primaryClasses" [value]="c">{{ c }}</option>
+        </optgroup>
+        <optgroup label="🏫 Collège">
+            <option *ngFor="let c of collegeClasses" [value]="c">{{ c }}</option>
+        </optgroup>
+        <optgroup label="🎓 Lycée">
+            <option *ngFor="let c of lyceeClasses" [value]="c">{{ c }}</option>
+        </optgroup>
+    </select>
+</div>
+
+<!-- Formulaire Modal -->
+<div *ngIf="showForm" class="modal-overlay" (click)="closeForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>{{ editingSchedule ? 'Modifier' : 'Nouveau' }} cours</h3>
+        <form (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label>Classe *</label>
+                <select [(ngModel)]="scheduleForm.className" name="className" (change)="onClassChange()" required>
+                    <option value="">-- Sélectionner --</option>
+                    <optgroup label="📚 Primaire">
+                        <option *ngFor="let c of primaryClasses" [value]="c">{{ c }}</option>
+                    </optgroup>
+                    <optgroup label="🏫 Collège">
+                        <option *ngFor="let c of collegeClasses" [value]="c">{{ c }}</option>
+                    </optgroup>
+                    <optgroup label="🎓 Lycée">
+                        <option *ngFor="let c of lyceeClasses" [value]="c">{{ c }}</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Matière *</label>
+                <select [(ngModel)]="scheduleForm.subject" name="subject" required [disabled]="!scheduleForm.className">
+                    <option value="">-- Sélectionner une matière --</option>
+                    <option *ngFor="let s of availableSubjects" [value]="s">{{ s }}</option>
+                </select>
+                <small *ngIf="!scheduleForm.className" class="help-text">Sélectionnez d'abord une classe</small>
+            </div>
+
+            <div class="form-group">
+                <label>Jour *</label>
+                <select [(ngModel)]="scheduleForm.dayOfWeek" name="dayOfWeek" required>
+                    <option value="">-- Sélectionner --</option>
+                    <option *ngFor="let d of days" [value]="d">{{ d }}</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Début *</label>
+                    <input type="time" [(ngModel)]="scheduleForm.startTime" name="startTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Fin *</label>
+                    <input type="time" [(ngModel)]="scheduleForm.endTime" name="endTime" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="closeForm()">Annuler</button>
+                <button type="submit" class="btn-primary">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tableau -->
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>Classe</th>
+            <th>Niveau</th>
+            <th>Matière</th>
+            <th>Jour</th>
+            <th>Horaires</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let s of filteredSchedules">
+            <td><span class="badge badge-info">{{ s.className }}</span></td>
+            <td><span class="badge badge-secondary">{{ getClassLevel(s.className) }}</span></td>
+            <td><strong>{{ s.subject }}</strong></td>
+            <td>
+          <span class="day-badge" [style.background]="getDayColor(s.dayOfWeek)">
+            {{ s.dayOfWeek }}
+          </span>
+            </td>
+            <td>{{ s.startTime }} - {{ s.endTime }}</td>
+            <td class="actions">
+                <button class="btn-outline btn-sm" (click)="openForm(s)">✏️</button>
+                <button class="btn-danger btn-sm" (click)="deleteSchedule(s.id)">🗑️</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="filteredSchedules.length === 0" class="empty-state">
+    <p>Aucun emploi du temps trouvé</p>
+</div>

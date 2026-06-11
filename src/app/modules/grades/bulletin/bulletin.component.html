@@ -1,0 +1,300 @@
+<div class="page-header no-print">
+    <div>
+        <h2>Bulletins scolaires</h2>
+        <p class="subtitle">Générez et consultez les bulletins des étudiants</p>
+    </div>
+</div>
+
+<div class="bulletin-container">
+    <!-- Mode de génération -->
+    <div class="mode-selector no-print">
+        <h3>Mode de génération</h3>
+        <div class="mode-buttons">
+            <button [class.active]="generationMode === 'individual'" (click)="generationMode = 'individual'">Individu</button>
+            <button [class.active]="generationMode === 'class'" (click)="generationMode = 'class'">Classe</button>
+            <button [class.active]="generationMode === 'college'" (click)="generationMode = 'college'">Collège</button>
+            <button [class.active]="generationMode === 'lycee'" (click)="generationMode = 'lycee'">Lycée</button>
+            <button [class.active]="generationMode === 'school'" (click)="generationMode = 'school'">Établissement</button>
+        </div>
+    </div>
+
+    <!-- Sélecteur -->
+    <div class="selector-card no-print">
+        <div *ngIf="generationMode === 'individual'" class="form-row">
+            <div class="form-group">
+                <label>Étudiant</label>
+                <select [(ngModel)]="selectedStudent" (change)="loadBulletin()">
+                    <option [ngValue]="null">-- Sélectionner un étudiant --</option>
+                    <option *ngFor="let s of students" [ngValue]="s">{{ s.firstName }} {{ s.lastName }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Trimestre</label>
+                <select [(ngModel)]="selectedTerm" (change)="loadBulletin()">
+                    <option value="">Tous les trimestres</option>
+                    <option *ngFor="let t of terms" [value]="t">{{ t }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div *ngIf="generationMode === 'class'" class="form-row">
+            <div class="form-group">
+                <label>Classe</label>
+                <select [(ngModel)]="selectedClass">
+                    <option value="">-- Sélectionner une classe --</option>
+                    <optgroup label="Primaire">
+                        <option *ngFor="let c of primaryClasses" [value]="c">{{ c }}</option>
+                    </optgroup>
+                    <optgroup label="Collège">
+                        <option *ngFor="let c of collegeClasses" [value]="c">{{ c }}</option>
+                    </optgroup>
+                    <optgroup label="Lycée">
+                        <option *ngFor="let c of lyceeClasses" [value]="c">{{ c }}</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Trimestre</label>
+                <select [(ngModel)]="selectedTerm">
+                    <option value="">Tous les trimestres</option>
+                    <option *ngFor="let t of terms" [value]="t">{{ t }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div *ngIf="generationMode !== 'individual' && generationMode !== 'class'" class="form-group">
+            <label>Trimestre</label>
+            <select [(ngModel)]="selectedTerm">
+                <option value="">Tous les trimestres</option>
+                <option *ngFor="let t of terms" [value]="t">{{ t }}</option>
+            </select>
+        </div>
+
+        <button class="btn-primary generate-btn" (click)="generateBulletins()" [disabled]="loading">
+            {{ loading ? 'Génération en cours...' : 'Générer le(s) bulletin(s)' }}
+        </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading no-print">
+        <div class="spinner"></div>
+        <p>Génération des bulletins en cours...</p>
+    </div>
+
+    <!-- Bulletin individuel -->
+    <div *ngIf="bulletinData && !loading && generationMode === 'individual'" class="bulletin-card" id="bulletin-content">
+        <!-- Actions -->
+        <div class="bulletin-actions no-print">
+            <button class="btn-success" (click)="printBulletin()">Imprimer</button>
+            <button class="btn-primary" (click)="downloadBulletin()">Télécharger PDF</button>
+        </div>
+
+        <!-- En-tête -->
+        <div class="bulletin-header">
+            <div class="school-info">
+                <h2>École Digitale</h2>
+                <p class="school-address">123 Rue de l'Éducation - Dakar, Sénégal</p>
+                <p>Bulletin scolaire - {{ bulletinData.term || 'Année complète' }}</p>
+            </div>
+            <div class="student-info">
+                <h3>{{ bulletinData.student.firstName }} {{ bulletinData.student.lastName }}</h3>
+                <p><strong>Né(e) le:</strong> {{ bulletinData.student.dateOfBirth | date:'dd/MM/yyyy' }}</p>
+                <p><strong>Genre:</strong> {{ bulletinData.student.gender }}</p>
+                <p *ngIf="bulletinData.student.nationality"><strong>Nationalité:</strong> {{ bulletinData.student.nationality }}</p>
+            </div>
+        </div>
+
+        <!-- Résumé global -->
+        <div class="summary-section">
+            <h3>Résumé Global</h3>
+            <div class="summary-grid">
+                <div class="summary-box highlight">
+                    <div class="summary-value">{{ bulletinData.generalAverage | number:'1.2-2' }}/20</div>
+                    <div class="summary-label">Moyenne Générale</div>
+                    <div class="summary-rank">Rang: {{ bulletinData.generalRank }}/{{ bulletinData.totalStudents }}</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-value">{{ bulletinData.totalCoefficient }}</div>
+                    <div class="summary-label">Total Coefficients</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-value">{{ bulletinData.totalWeightedScore | number:'1.2-2' }}</div>
+                    <div class="summary-label">Total Points</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-value">{{ bulletinData.totalScore | number:'1.2-2' }}</div>
+                    <div class="summary-label">Somme des Notes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques par section -->
+        <div class="sections-grid">
+            <div class="section-card scientific">
+                <h4>Section Scientifique</h4>
+                <div class="section-stats">
+                    <div class="stat">
+                        <span class="label">Moyenne:</span>
+                        <span class="value">{{ bulletinData.scientificSection.average | number:'1.2-2' }}/20</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Rang:</span>
+                        <span class="value">{{ bulletinData.scientificSection.rank }}/{{ bulletinData.scientificSection.totalStudents }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Coefficients:</span>
+                        <span class="value">{{ bulletinData.scientificSection.totalCoefficient }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Total Points:</span>
+                        <span class="value">{{ bulletinData.scientificSection.totalWeightedScore | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card literary">
+                <h4>Section Littéraire</h4>
+                <div class="section-stats">
+                    <div class="stat">
+                        <span class="label">Moyenne:</span>
+                        <span class="value">{{ bulletinData.literarySection.average | number:'1.2-2' }}/20</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Rang:</span>
+                        <span class="value">{{ bulletinData.literarySection.rank }}/{{ bulletinData.literarySection.totalStudents }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Coefficients:</span>
+                        <span class="value">{{ bulletinData.literarySection.totalCoefficient }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Total Points:</span>
+                        <span class="value">{{ bulletinData.literarySection.totalWeightedScore | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card sports">
+                <h4>Section Sportive</h4>
+                <div class="section-stats">
+                    <div class="stat">
+                        <span class="label">Moyenne:</span>
+                        <span class="value">{{ bulletinData.sportsSection.average | number:'1.2-2' }}/20</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Rang:</span>
+                        <span class="value">{{ bulletinData.sportsSection.rank }}/{{ bulletinData.sportsSection.totalStudents }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Coefficients:</span>
+                        <span class="value">{{ bulletinData.sportsSection.totalCoefficient }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Total Points:</span>
+                        <span class="value">{{ bulletinData.sportsSection.totalWeightedScore | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tableau détaillé des notes -->
+        <div class="grades-section">
+            <h3>Détails des Notes</h3>
+            <table class="grades-table">
+                <thead>
+                <tr>
+                    <th>Matière</th>
+                    <th>Coefficient</th>
+                    <th>Note /20</th>
+                    <th>Points</th>
+                    <th>Professeur</th>
+                    <th>Statut</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let grade of bulletinData.grades" [class]="getGradeClass(grade.score)" [class.missing]="grade.isMissing">
+                    <td><strong>{{ grade.subject }}</strong></td>
+                    <td class="center">{{ grade.coefficient }}</td>
+                    <td class="center grade-score">{{ grade.score | number:'1.2-2' }}</td>
+                    <td class="center">{{ grade.weightedScore | number:'1.2-2' }}</td>
+                    <td>{{ grade.teacher }}</td>
+                    <td class="center">
+                        <span *ngIf="!grade.isMissing" class="status-badge status-ok">Évalué</span>
+                        <span *ngIf="grade.isMissing" class="status-badge status-missing">Non évalué</span>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr class="total-row">
+                    <td><strong>TOTAL</strong></td>
+                    <td class="center"><strong>{{ bulletinData.totalCoefficient }}</strong></td>
+                    <td class="center"><strong>{{ bulletinData.totalScore | number:'1.2-2' }}</strong></td>
+                    <td class="center"><strong>{{ bulletinData.totalWeightedScore | number:'1.2-2' }}</strong></td>
+                    <td colspan="2"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Appréciation -->
+        <div class="appreciation-section">
+            <h3>Appréciation Générale</h3>
+            <div class="appreciation-box">
+                <p>{{ bulletinData.appreciation }}</p>
+            </div>
+        </div>
+
+        <!-- Pied de page -->
+        <div class="bulletin-footer">
+            <div class="footer-grid">
+                <div class="footer-item">
+                    <p><strong>Date de génération:</strong></p>
+                    <p>{{ currentDate | date:'dd/MM/yyyy à HH:mm' }}</p>
+                </div>
+                <div class="footer-item">
+                    <p><strong>Signature du titulaire:</strong></p>
+                    <p>_________________________</p>
+                </div>
+                <div class="footer-item">
+                    <p><strong>Signature du directeur:</strong></p>
+                    <p>_________________________</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tous les bulletins -->
+    <div *ngIf="showAllBulletins && allBulletins.length > 0 && !loading && !(generationMode === 'individual' && bulletinData)" class="all-bulletins no-print">
+        <div class="all-bulletins-header">
+            <h3>Bulletins générés ({{ allBulletins.length }})</h3>
+            <button class="btn-primary" (click)="downloadAllBulletins()">Tout télécharger</button>
+        </div>
+
+        <div class="bulletins-grid">
+            <div *ngFor="let bulletin of allBulletins" class="bulletin-mini">
+                <div class="mini-header">
+                    <h4>{{ bulletin.student.firstName }} {{ bulletin.student.lastName }}</h4>
+                    <span class="badge badge-info">{{ bulletin.term || 'Année' }}</span>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <span class="label">Moyenne:</span>
+                        <span class="value">{{ bulletin.generalAverage | number:'1.2-2' }}/20</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="label">Rang:</span>
+                        <span class="value">{{ bulletin.generalRank }}/{{ bulletin.totalStudents }}</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="label">Scientifique:</span>
+                        <span class="value">{{ bulletin.scientificSection.average | number:'1.2-2' }}/20</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="label">Littéraire:</span>
+                        <span class="value">{{ bulletin.literarySection.average | number:'1.2-2' }}/20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
