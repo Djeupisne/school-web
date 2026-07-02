@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: '/api' // Use relative path or proxy in production
+  apiUrl: 'https://school-api-5s20.onrender.com/api'
 };
