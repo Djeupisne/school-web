@@ -6,10 +6,11 @@
     "npm": "9.x"
   },
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test"
+    "ng": "npx ng",
+    "start": "npx ng serve",
+    "build": "npx ng build",
+    "test": "npx ng test",
+    "postinstall": "npx ngcc"
   },
   "private": true,
   "dependencies": {
